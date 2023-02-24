@@ -13,14 +13,15 @@ def testfn():    # GET request
         return 'Sucesss', 200
 
 
-
 @app.route('/api/get', methods = ['GET'])
-def get_articales():
+def get_hello_world():
     return jsonify({"hello":"World"})
 
 
+
+#Basic CRUD
 @app.route('/api/add', methods = ['POST'])
-def add_articale():
+def add_article():
 
     title = request.json['title']
     body = request.json['body']
@@ -29,8 +30,19 @@ def add_articale():
     db.session.add(article)
     db.session.commit()
 
+    return models.article_schema.jsonify(article)
+
+
+@app.route('/api/get/article/<article_id>/', methods = ['GET'])
+def get_article(article_id):
+
+    article = models.Article.query.get(article_id)
+
+    return models.article_schema.jsonify(article)
+
+
 @app.route('/api/get/articles', methods = ['GET'])
-def get_articles():
+def get_all_articles():
 
 
     all_articles = models.Article.query.all()
@@ -39,10 +51,10 @@ def get_articles():
     return jsonify(results)
 
 
-@app.route('/api/update/<id>/', methods = ['PUT'])
-def update_article(id):
+@app.route('/api/update/<article_id>/', methods = ['PUT'])
+def update_article(article_id):
 
-    article = models.Article.query.get(id)
+    article = models.Article.query.get(article_id)
 
     title = request.json['title']
     body = request.json['body']
@@ -55,9 +67,9 @@ def update_article(id):
 
 
 @app.route('/api/delete/<id>/', methods = ['DELETE'])
-def delete_article(id):
+def delete_article(article_id):
 
-    article = models.Article.query.get(id)
+    article = models.Article.query.get(article_id)
     db.session.delete(article)
     db.session.commit()
 
