@@ -33,10 +33,10 @@ def add_article():
     return models.article_schema.jsonify(article)
 
 
-@app.route('/api/get/article/<article_id>/', methods = ['GET'])
-def get_article(article_id):
+@app.route('/api/get/article/<id>/', methods = ['GET'])
+def get_article(id):
 
-    article = models.Article.query.get(article_id)
+    article = models.Article.query.get(id)
 
     return models.article_schema.jsonify(article)
 
@@ -51,10 +51,10 @@ def get_all_articles():
     return jsonify(results)
 
 
-@app.route('/api/update/<article_id>/', methods = ['PUT'])
-def update_article(article_id):
+@app.route('/api/update/<id>/', methods = ['PUT'])
+def update_article(id):
 
-    article = models.Article.query.get(article_id)
+    article = models.Article.query.get(id)
 
     title = request.json['title']
     body = request.json['body']
@@ -67,9 +67,9 @@ def update_article(article_id):
 
 
 @app.route('/api/delete/<id>/', methods = ['DELETE'])
-def delete_article(article_id):
+def delete_article(id):
 
-    article = models.Article.query.get(article_id)
+    article = models.Article.query.get( id)
     db.session.delete(article)
     db.session.commit()
 
