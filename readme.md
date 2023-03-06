@@ -1,7 +1,8 @@
 
 flask shell
 db.create_all()
-cd flask app - flask run - runs on localhost:5000
+
+cd into flask app - flask run - runs on localhost:5000
 cd into frontend - npm run dev - runs on localhost:3000
 
 Create-React-App sucks. Used Vite to build react app instead.
