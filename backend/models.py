@@ -1,7 +1,31 @@
+"""Sql Database Models here"""
+
 from flask import jsonify, request
-from app import app, db, ma
+from backend import db, ma
 import datetime
 import uuid
+
+from hashlib import md5
+import secrets
+from time import time
+from typing import Optional
+from flask import current_app, url_for
+import sqlalchemy as sa
+from sqlalchemy import orm as so
+from werkzeug.security import generate_password_hash, check_password_hash
+
+from backend.app import db
+
+def db_reset(): #delete later
+
+    db.drop_all()
+    db.create_all()
+
+class Updateable: #component class
+
+    def update(self, data):
+        for attr, value in data.items():
+            setattr(self, attr, value)
 
 
 class Article(db.Model):
@@ -23,16 +47,6 @@ class Article(db.Model):
         return '<Title {}>'.format(self.title)
 
 
-class ArticleSchema(ma.Schema):
-
-    class Meta():
-        fields = ('article_id', 'date', 'title', 'body')
-
-article_schema = ArticleSchema()
-articles_schema = ArticleSchema(many=True)
-
-
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.String(40), unique=True)
@@ -52,16 +66,4 @@ class User(db.Model):
     def get_uuid(self):
 
         return uuid.uuid4().hex
-
-    
-class UserSchema(ma.Schema):
-
-    class Meta():
-        fields = ('User_id', 'username', 'email')
-
-user_schema = UserSchema()
-users_schema = UserSchema(many=True)
-
-
-
 

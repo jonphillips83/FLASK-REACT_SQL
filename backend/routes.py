@@ -1,9 +1,17 @@
-from flask import jsonify, request
-from app import app, db, models
+"""flask routing table - registering routes via Flask Blueprint"""
+
+from flask import jsonify, request, Blueprint
+from backend import db, models
+
+from backend.schemas import ArticleSchema
+
+routes = Blueprint('routes', __name__)
+
+article_schema = ArticleSchema()
+articles_schema = ArticleSchema(many=True)
 
 
-
-@app.route('/test', methods=['GET', 'POST'])
+@routes.route('/test', methods=['GET', 'POST'])
 def testfn():    # GET request
     if request.method == 'GET':
         message = {'greeting':'Hello from Flask!'}
@@ -13,14 +21,14 @@ def testfn():    # GET request
         return 'Sucesss', 200
 
 
-@app.route('/api/get', methods = ['GET'])
+@routes.route('/get', methods = ['GET'])
 def get_hello_world():
     return jsonify({"hello":"World"})
 
 
 
 #Basic CRUD
-@app.route('/api/add', methods = ['POST'])
+@routes.route('/add', methods = ['POST'])
 def add_article():
 
     title = request.json['title']
@@ -30,28 +38,28 @@ def add_article():
     db.session.add(article)
     db.session.commit()
 
-    return models.article_schema.jsonify(article)
+    return article_schema.jsonify(article)
 
 
-@app.route('/api/get/article/<id>/', methods = ['GET'])
+@routes.route('/get/article/<id>/', methods = ['GET'])
 def get_article(id):
 
     article = models.Article.query.get(id)
 
-    return models.article_schema.jsonify(article)
+    return article_schema.jsonify(article)
 
 
-@app.route('/api/get/articles', methods = ['GET'])
+@routes.route('/get/articles', methods = ['GET'])
 def get_all_articles():
 
 
     all_articles = models.Article.query.all()
-    results = models.articles_schema.dump(all_articles)
+    results = articles_schema.dump(all_articles)
 
     return jsonify(results)
 
 
-@app.route('/api/update/<id>/', methods = ['PUT'])
+@routes.route('/update/<id>/', methods = ['PUT'])
 def update_article(id):
 
     article = models.Article.query.get(id)
@@ -63,14 +71,14 @@ def update_article(id):
     article.body = body
 
     db.session.commit()
-    return models.article_schema.jsonify(article)
+    return article_schema.jsonify(article)
 
 
-@app.route('/api/delete/<id>/', methods = ['DELETE'])
+@routes.route('/delete/<id>/', methods = ['DELETE'])
 def delete_article(id):
 
-    article = models.Article.query.get( id)
+    article = models.Article.query.get(id)
     db.session.delete(article)
     db.session.commit()
 
-    return models.article_schema.jsonify(article)
+    return article_schema.jsonify(article)
